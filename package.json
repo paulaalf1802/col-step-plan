@@ -1,0 +1,19 @@
+{
+  "name": "tenure-increase-calculator",
+  "version": "1.0.0",
+  "description": "A web-based tool to calculate salary increases based on employee tenure",
+  "main": "script.js",
+  "scripts": {
+    "test": "node --test tests/**/*.test.js",
+    "test:unit": "node --test tests/TenureCalculator.test.js",
+    "test:property": "node --test tests/TenureCalculator.property.test.js",
+    "test:watch": "node --test --watch tests/**/*.test.js"
+  },
+  "devDependencies": {
+    "fast-check": "^3.15.0"
+  },
+  "type": "module",
+  "dependencies": {
+    "xlsx": "^0.18.5"
+  }
+}

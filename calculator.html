@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenure Increase Calculator</title>
+    <link rel="stylesheet" href="calculator.css">
+</head>
+<body>
+    <div class="container">
+        <header class="app-header">
+            <h1>Tenure Increase Calculator</h1>
+            <p class="subtitle">Colombia CS Step Plan · Salary increase based on years of service</p>
+        </header>
+
+        <!-- ── Error banner (Requirement 2.4) ── -->
+        <div id="error-section" class="error-section" hidden aria-live="assertive"></div>
+
+        <!-- ── Main form (Requirements 2.1, 2.5, 5.1) ── -->
+        <main>
+            <form id="tenure-form" class="tenure-form" novalidate>
+                <h2 class="form-title">Employee Information</h2>
+
+                <!-- Name -->
+                <div class="form-group">
+                    <label for="name" class="form-label">
+                        Employee Name <span class="required" aria-hidden="true">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        class="form-input"
+                        placeholder="e.g. Maria Garcia"
+                        autocomplete="name"
+                        required
+                        aria-required="true"
+                        aria-describedby="name-hint"
+                    >
+                    <span id="name-hint" class="field-hint">Full name of the employee</span>
+                </div>
+
+                <!-- Start Date (Requirements 2.1, 2.2) -->
+                <div class="form-group">
+                    <label for="startDate" class="form-label">
+                        Employment Start Date <span class="required" aria-hidden="true">*</span>
+                    </label>
+                    <input
+                        type="date"
+                        id="startDate"
+                        name="startDate"
+                        class="form-input"
+                        required
+                        aria-required="true"
+                        aria-describedby="startDate-hint"
+                    >
+                    <span id="startDate-hint" class="field-hint">Date the employee started their current role (must not be in the future)</span>
+                </div>
+
+                <!-- Current Salary (Requirements 2.1, 2.3) -->
+                <div class="form-group">
+                    <label for="currentSalary" class="form-label">
+                        Current Salary <span class="required" aria-hidden="true">*</span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-prefix" aria-hidden="true">$</span>
+                        <input
+                            type="number"
+                            id="currentSalary"
+                            name="currentSalary"
+                            class="form-input input-with-prefix"
+                            placeholder="e.g. 50000"
+                            min="0.01"
+                            step="0.01"
+                            required
+                            aria-required="true"
+                            aria-describedby="salary-hint"
+                        >
+                    </div>
+                    <span id="salary-hint" class="field-hint">Current annual base salary (must be a positive number)</span>
+                </div>
+
+                <!-- Calculation Date (optional, defaults to today) -->
+                <div class="form-group">
+                    <label for="calculationDate" class="form-label">
+                        Calculation Date
+                        <span class="optional-label">(optional — defaults to today)</span>
+                    </label>
+                    <input
+                        type="date"
+                        id="calculationDate"
+                        name="calculationDate"
+                        class="form-input"
+                        aria-describedby="calcDate-hint"
+                    >
+                    <span id="calcDate-hint" class="field-hint">Date to calculate tenure as of. Defaults to today if left blank.</span>
+                </div>
+
+                <!-- Buttons -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        Calculate Increase
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-action="reset">
+                        Reset
+                    </button>
+                </div>
+            </form>
+
+            <!-- ── Results (Requirements 1.4, 3.3, 3.4, 3.5) ── -->
+            <section id="results-section" class="results-section" hidden aria-live="polite" aria-label="Calculation Results">
+                <!-- Populated by FormHandler.displayResults() -->
+            </section>
+        </main>
+
+        <!-- ── Step Plan Reference ── -->
+        <aside class="step-plan-reference">
+            <h2>Step Plan Reference</h2>
+            <table class="step-table" aria-label="Step plan tiers">
+                <thead>
+                    <tr>
+                        <th scope="col">Years of Service</th>
+                        <th scope="col">Increase</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Less than 1 year</td><td>0%</td></tr>
+                    <tr><td>1 – 3 years</td><td>3%</td></tr>
+                    <tr><td>3 – 5 years</td><td>5%</td></tr>
+                    <tr><td>5 – 10 years</td><td>7%</td></tr>
+                    <tr><td>10 – 15 years</td><td>10%</td></tr>
+                    <tr><td>15+ years</td><td>12%</td></tr>
+                </tbody>
+            </table>
+        </aside>
+    </div>
+
+    <script type="module" src="src/app.js"></script>
+</body>
+</html>

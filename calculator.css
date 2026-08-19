@@ -1,0 +1,354 @@
+/* ═══════════════════════════════════════════════════════════════
+   Tenure Increase Calculator — Stylesheet
+   Requirements: Visual requirements implied by user interface needs
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Reset & base ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #1a1a2e;
+    background: #f4f6fb;
+    min-height: 100vh;
+}
+
+/* ── Layout ───────────────────────────────────────────────────── */
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+/* ── Header ───────────────────────────────────────────────────── */
+.app-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.app-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #16213e;
+}
+
+.subtitle {
+    color: #5a6a80;
+    font-size: 0.95rem;
+    margin-top: 0.25rem;
+}
+
+/* ── Form card ────────────────────────────────────────────────── */
+.tenure-form {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    margin-bottom: 2rem;
+}
+
+.form-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #16213e;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+/* ── Form groups ──────────────────────────────────────────────── */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #2c3e50;
+    margin-bottom: 0.4rem;
+}
+
+.required {
+    color: #e74c3c;
+    margin-left: 2px;
+}
+
+.optional-label {
+    font-weight: 400;
+    color: #7f8c9b;
+    font-size: 0.85rem;
+    margin-left: 4px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.6rem 0.85rem;
+    border: 1.5px solid #ced4da;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #1a1a2e;
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #4361ee;
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+}
+
+/* ── Error state (Requirement 2.4) ────────────────────────────── */
+.form-input.field-error {
+    border-color: #e74c3c;
+    background: #fff8f8;
+}
+
+.form-input.field-error:focus {
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15);
+}
+
+.field-error-msg {
+    display: block;
+    color: #e74c3c;
+    font-size: 0.82rem;
+    margin-top: 0.3rem;
+}
+
+.field-hint {
+    display: block;
+    color: #7f8c9b;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+}
+
+/* ── Input with prefix ($) ────────────────────────────────────── */
+.input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-prefix {
+    position: absolute;
+    left: 0.85rem;
+    color: #5a6a80;
+    font-size: 1rem;
+    pointer-events: none;
+}
+
+.input-with-prefix {
+    padding-left: 1.75rem;
+}
+
+/* ── Buttons ──────────────────────────────────────────────────── */
+.form-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 0.65rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+}
+
+.btn:active { transform: translateY(1px); }
+
+.btn-primary {
+    background: #4361ee;
+    color: #fff;
+}
+
+.btn-primary:hover { background: #3451d1; box-shadow: 0 4px 12px rgba(67,97,238,0.25); }
+
+.btn-secondary {
+    background: #f0f3ff;
+    color: #4361ee;
+}
+
+.btn-secondary:hover { background: #e0e7ff; }
+
+/* ── Error banner ─────────────────────────────────────────────── */
+.error-section {
+    margin-bottom: 1.5rem;
+}
+
+.error-banner {
+    background: #fdf0f0;
+    border: 1.5px solid #e74c3c;
+    border-left: 5px solid #e74c3c;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    color: #c0392b;
+}
+
+.error-banner strong {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.error-list {
+    margin: 0;
+    padding-left: 1.25rem;
+}
+
+.error-list li {
+    margin-bottom: 0.2rem;
+}
+
+/* ── Results card ─────────────────────────────────────────────── */
+.results-section {
+    margin-bottom: 2rem;
+}
+
+.results-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.results-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #16213e;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.results-employee {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.results-label {
+    font-weight: 600;
+    color: #5a6a80;
+    font-size: 0.9rem;
+}
+
+.results-value {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #16213e;
+}
+
+.results-section > section {
+    margin-top: 1.5rem;
+}
+
+.results-section > section h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #7f8c9b;
+    margin-bottom: 0.9rem;
+}
+
+/* ── Stats grid ───────────────────────────────────────────────── */
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.stat-item {
+    background: #f8f9ff;
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    border: 1px solid #e9ecef;
+}
+
+.stat-item.highlight {
+    border-color: #4361ee;
+    background: #f0f3ff;
+}
+
+.stat-item--new-salary {
+    background: #f0fff4;
+    border-color: #27ae60;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #7f8c9b;
+    margin-bottom: 0.25rem;
+}
+
+.stat-value {
+    display: block;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #16213e;
+}
+
+.stat-item--new-salary .stat-value {
+    font-size: 1.15rem;
+    color: #27ae60;
+}
+
+/* ── Step plan reference ──────────────────────────────────────── */
+.step-plan-reference {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.step-plan-reference h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #16213e;
+    margin-bottom: 1rem;
+}
+
+.step-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.step-table th,
+.step-table td {
+    padding: 0.55rem 0.85rem;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.step-table th {
+    font-weight: 700;
+    background: #f8f9ff;
+    color: #5a6a80;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.step-table tbody tr:last-child td { border-bottom: none; }
+.step-table tbody tr:hover td { background: #f8f9ff; }
+
+/* ── Responsive ───────────────────────────────────────────────── */
+@media (max-width: 600px) {
+    .container { padding: 1rem; }
+    .app-header h1 { font-size: 1.5rem; }
+    .results-grid { grid-template-columns: 1fr 1fr; }
+    .form-actions { flex-direction: column; }
+    .btn { width: 100%; text-align: center; }
+}

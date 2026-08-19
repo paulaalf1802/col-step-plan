@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colombia CS Step Plan – Tenure Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Colombia CS Step Plan</h1>
+            <p class="subtitle">Tenure Progression &amp; Pay Rate Calculator · Job Code P02241 · Location VCC</p>
+        </div>
+
+        <!-- ══════════════════════════════════════════════
+             RATE FILE BANNER
+        ═══════════════════════════════════════════════ -->
+        <div class="rate-banner" id="rateBanner">
+            <div class="rate-banner-left">
+                <span class="rate-icon">📋</span>
+                <div>
+                    <span class="rate-label">Rate File Active:</span>
+                    <span id="rateFileLabel">July 2026 (built-in)</span>
+                </div>
+            </div>
+            <div class="rate-banner-right">
+                <label for="rateFileInput" class="btn-rate-upload">⬆ Upload New Rate File</label>
+                <input type="file" id="rateFileInput" accept=".csv" style="display:none" onchange="loadRateFile(event)">
+                <button class="btn-rate-reset" onclick="resetRateFile()" id="rateResetBtn" style="display:none">↺ Reset to Built-in</button>
+            </div>
+        </div>
+        <div id="rateFileError" class="rate-error hidden"></div>
+        <div id="ratePreview" class="rate-preview hidden"></div>
+
+        <!-- Dashboard Tabs -->
+        <div class="tab-container">
+            <button class="tab-button active" onclick="showTab('population', this)">Eligible CS Population</button>
+            <button class="tab-button" onclick="showTab('tenure', this)">Tenure Calculation</button>
+            <button class="tab-button" onclick="showTab('terminated', this)">Terminated Employees</button>
+        </div>
+
+        <!-- ══════════════════════════════════════════════
+             TAB 1 – Eligible CS Population
+        ═══════════════════════════════════════════════ -->
+        <div id="populationTab" class="tab-content active">
+            <div class="section-header">
+                <h2>Eligible CS Population</h2>
+                <p>All Colombia CS employees in scope for the Step Plan (Job Code P02241, Location VCC). Upload a roster extract to populate this view.</p>
+            </div>
+
+            <div class="controls-row">
+                <div class="form-group">
+                    <label for="popCalcDate">Reference Date:</label>
+                    <input type="date" id="popCalcDate">
+                </div>
+                <div class="form-group">
+                    <label for="popFile">Upload CSV Roster:</label>
+                    <input type="file" id="popFile" accept=".csv" onchange="handlePopulationUpload(event)">
+                </div>
+                <div class="form-group" style="align-self:flex-end;">
+                    <button type="button" class="btn-primary" onclick="processPopulation()">Load Population</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="popPasteData">Or paste CSV data:</label>
+                <textarea id="popPasteData" rows="6"
+                    placeholder="Employee ID,Name,Full/Part Time,Job Code,Last Hire Date (YYYY-MM-DD),Shift Code,Location Code,Current Salary&#10;EMP001,Maria Garcia,F,P02241,2022-05-15,0,VCC,21010860"></textarea>
+                <small><strong>Shift Codes:</strong> QuickSight: ~ = Spanish-speaking · 3/B/G = English | ADP: 0 = Spanish · 1/2/3 = English</small>
+            </div>
+
+            <!-- Filters -->
+            <div class="filter-row" id="popFilters" style="display:none;">
+                <input type="text" id="popEmpIdFilter" placeholder="Filter by Employee ID(s), comma-separated" oninput="filterPopulationTable()">
+                <select id="popLanguageFilter" onchange="filterPopulationTable()">
+                    <option value="">All Languages</option>
+                    <option value="Spanish">Spanish</option>
+                    <option value="English">English</option>
+                </select>
+                <select id="popStepFilter" onchange="filterPopulationTable()">
+                    <option value="">All Steps</option>
+                    <option value="Mo6">Mo6</option>
+                    <option value="Mo12">Mo12</option>
+                    <option value="Mo24">Mo24</option>
+                    <option value="Mo36">Mo36</option>
+                </select>
+                <button type="button" class="btn-secondary" onclick="downloadPopulationCSV()">⬇ Download CSV</button>
+            </div>
+
+            <div id="populationResults" class="hidden">
+                <div id="popSummary" class="summary-box"></div>
+                <div id="popTableContainer" class="table-container"></div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════
+             TAB 2 – Tenure Calculation
+        ═══════════════════════════════════════════════ -->
+        <div id="tenureTab" class="tab-content">
+            <div class="section-header">
+                <h2>Tenure Calculation &amp; Pay Rate Review</h2>
+                <p>Identify employees reaching tenure milestones within a date range and compute proposed pay rates.</p>
+            </div>
+
+            <!-- Date Range Controls -->
+            <div class="controls-row">
+                <div class="form-group">
+                    <label for="tenureStartDate">Effective Date From:</label>
+                    <input type="date" id="tenureStartDate">
+                </div>
+                <div class="form-group">
+                    <label for="tenureEndDate">Effective Date To:</label>
+                    <input type="date" id="tenureEndDate">
+                </div>
+                <div class="form-group" style="align-self:flex-end;">
+                    <button type="button" class="btn-primary" onclick="processTenureCalculation()">Calculate Milestones</button>
+                </div>
+            </div>
+
+            <!-- Single Employee Quick Lookup -->
+            <details class="collapsible">
+                <summary>Single Employee Quick Lookup</summary>
+                <div class="collapsible-body">
+                    <div class="controls-row">
+                        <div class="form-group">
+                            <label for="singleEmpId">Employee ID:</label>
+                            <input type="text" id="singleEmpId" placeholder="EMP001">
+                        </div>
+                        <div class="form-group">
+                            <label for="singleHireDate">Last Hire Date:</label>
+                            <input type="date" id="singleHireDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="singleTempDate">Temp Start Date (if applicable):</label>
+                            <input type="date" id="singleTempDate" placeholder="Optional">
+                        </div>
+                        <div class="form-group">
+                            <label for="singleRefDate">As-of Date:</label>
+                            <input type="date" id="singleRefDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="singleSalary">Current Salary (COP):</label>
+                            <input type="number" id="singleSalary" step="1" placeholder="21010860">
+                        </div>
+                        <div class="form-group">
+                            <label for="singleShift">Shift Code:</label>
+                            <input type="text" id="singleShift" placeholder="0, 1, 2, 3, ~, B, G" maxlength="2">
+                        </div>
+                        <div class="form-group">
+                            <label for="singleFPT">Full/Part Time:</label>
+                            <select id="singleFPT">
+                                <option value="F">F – Full Time</option>
+                                <option value="Q">Q – Part Time</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="align-self:flex-end;">
+                            <button type="button" class="btn-primary" onclick="singleLookup()">Calculate</button>
+                        </div>
+                    </div>
+                    <div id="singleResult" class="single-result hidden"></div>
+                </div>
+            </details>
+
+            <!-- Tenure Filters -->
+            <div class="filter-row" id="tenureFilters" style="display:none;">
+                <input type="text" id="tenureEmpIdFilter" placeholder="Filter by Employee ID(s), comma-separated" oninput="filterTenureTable()">
+                <select id="tenureStepFilter" onchange="filterTenureTable()">
+                    <option value="">All Milestones</option>
+                    <option value="Mo6">Mo6</option>
+                    <option value="Mo12">Mo12</option>
+                    <option value="Mo24">Mo24</option>
+                    <option value="Mo36">Mo36</option>
+                </select>
+                <select id="tenureRecoFilter" onchange="filterTenureTable()">
+                    <option value="">All Recommendations</option>
+                    <option value="Upload">Upload</option>
+                    <option value="No Action">No Action</option>
+                </select>
+                <button type="button" class="btn-secondary" onclick="downloadTenureCSV()">⬇ Download CSV</button>
+                <label for="caatTemplateInput" class="btn-rate-upload" title="Upload blank CAAT template (.xlsx)">⬆ CAAT Template</label>
+                <input type="file" id="caatTemplateInput" accept=".xlsx" style="display:none" onchange="loadCaatTemplate(event)">
+                <button type="button" class="btn-upload-export" onclick="downloadCAAT()">⬇ Export Upload File (CAAT)</button>
+                <span id="caatTemplateLabel" style="font-size:0.82em;color:#666;align-self:center;"></span>
+            </div>
+
+            <div id="tenureResults" class="hidden">
+                <div id="tenureSummary" class="summary-box"></div>
+                <div id="tenureTableContainer" class="table-container"></div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════
+             TAB 3 – Terminated Employees
+        ═══════════════════════════════════════════════ -->
+        <div id="terminatedTab" class="tab-content">
+            <div class="section-header">
+                <h2>Terminated Employees</h2>
+                <p>Historical termination records for CS employees. Supports backdated retrieval up to 3 years for audit and retroactive validation.</p>
+            </div>
+
+            <div class="controls-row">
+                <div class="form-group">
+                    <label for="termFromDate">Termination Date From:</label>
+                    <input type="date" id="termFromDate">
+                </div>
+                <div class="form-group">
+                    <label for="termToDate">Termination Date To:</label>
+                    <input type="date" id="termToDate">
+                </div>
+                <div class="form-group">
+                    <label for="termFile">Upload Terminated Employees CSV:</label>
+                    <input type="file" id="termFile" accept=".csv" onchange="handleTerminatedUpload(event)">
+                </div>
+                <div class="form-group" style="align-self:flex-end;">
+                    <button type="button" class="btn-primary" onclick="processTerminated()">Load Records</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="termPasteData">Or paste CSV data:</label>
+                <textarea id="termPasteData" rows="6"
+                    placeholder="Employee ID,Name,Last Hire Date (YYYY-MM-DD),Termination Date (YYYY-MM-DD),Job Code,Location Code,Final Salary&#10;EMP099,Carlos Ruiz,2021-03-01,2024-01-15,P02241,VCC,22000000"></textarea>
+            </div>
+
+            <!-- Filters -->
+            <div class="filter-row" id="termFilters" style="display:none;">
+                <input type="text" id="termEmpIdFilter" placeholder="Filter by Employee ID(s), comma-separated" oninput="filterTerminatedTable()">
+                <button type="button" class="btn-secondary" onclick="downloadTerminatedCSV()">⬇ Download CSV</button>
+            </div>
+
+            <div id="terminatedResults" class="hidden">
+                <div id="termSummary" class="summary-box"></div>
+                <div id="termTableContainer" class="table-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
